@@ -12,8 +12,10 @@ GameObject:
   - component: {fileID: 6623539664936486141}
   - component: {fileID: 2496277832480337732}
   - component: {fileID: 9120290727753147163}
+  - component: {fileID: 5835677328799816251}
+  - component: {fileID: 7604069590218065653}
   m_Layer: 5
-  m_Name: CubePrefab
+  m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66,7 +68,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -88,3 +90,27 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &5835677328799816251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3759914984072513173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82131c127b233436ab1c3bc88bd2b152, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7604069590218065653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3759914984072513173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce96b0521e57e4699961301e171a928a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
