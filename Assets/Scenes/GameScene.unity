@@ -281,8 +281,8 @@ Canvas:
   m_GameObject: {fileID: 248660935}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 963194227}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -767,7 +767,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 104.62}
+  m_AnchoredPosition: {x: 0, y: 104.619995}
   m_SizeDelta: {x: -0.00012207, y: 209.24}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1157765080
@@ -1076,7 +1076,7 @@ GameObject:
   - component: {fileID: 2000744702}
   m_Layer: 5
   m_Name: Tower
-  m_TagString: TowerArea
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1228,7 +1228,6 @@ MonoBehaviour:
   gameConfig: {fileID: 11400000, guid: e6938805958a4436a9cf491b32f4b682, type: 2}
   cubePrefab: {fileID: 3759914984072513173, guid: 3b7d966901ec449959a05e826eb2e424, type: 3}
   scrollViewPrefab: {fileID: 7317187957120393257, guid: b852d734e0dcc41d0af427a52a4edc6e, type: 3}
-  tower: {fileID: 2000744701}
 --- !u!1001 &8752294663022169378
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -30,6 +30,10 @@ public class GameInstaller : MonoInstaller
 
     private void InstallFactories()
     {
+        Container.Bind<ICubePool>()
+            .To<CubePool>()
+            .AsSingle();
+        
         Container.Bind<ICubeFactory>()
             .To<CubeFactory>()
             .AsSingle();

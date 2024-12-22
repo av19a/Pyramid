@@ -10,17 +10,24 @@ public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler
 {
     private ITowerService _towerService;
     private ICubeFactory _cubeFactory;
+    private IGameState _gameState;
+    private ICubePool _cubePool;
     
     private Canvas _canvas;
     private RectTransform _rectTransform;
     private CanvasGroup _canvasGroup;
     private GameObject _draggedCopy;
+    
+    private bool _isDraggingTowerCube;
 
     [Inject]
-    public void Construct(ITowerService towerService, ICubeFactory cubeFactory)
+    public void Construct(ITowerService towerService, ICubeFactory cubeFactory,
+        IGameState gameState, ICubePool cubePool)
     {
         _towerService = towerService;
         _cubeFactory = cubeFactory;
+        _gameState = gameState;
+        _cubePool = cubePool;
     }
 
     private void Awake()
@@ -32,7 +39,18 @@ public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        _draggedCopy = _cubeFactory.CreateDraggedCube(_canvas.transform, gameObject);
+        _isDraggingTowerCube = _gameState.TowerCubes.Contains(gameObject);
+        
+        if (_isDraggingTowerCube)
+        {
+            _draggedCopy = gameObject;
+            _towerService.RemoveCube(_draggedCopy);
+        }
+        else
+        {
+            _draggedCopy = _cubeFactory.CreateDraggedCube(_canvas.transform, gameObject);
+        }
+        
         _canvasGroup.blocksRaycasts = false;
     }
 
@@ -57,10 +75,14 @@ public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler
             Debug.Log("Jump");
             _towerService.AddCube(_draggedCopy);
         }
+        else if (!_isDraggingTowerCube)
+        {
+            // Return to pool instead of destroying
+            _cubePool.Return(_draggedCopy);
+        }
         else
         {
             Debug.Log("Destroy");
         }
-
     }
 }
