@@ -9,6 +9,7 @@ using Zenject;
 public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     private ITowerService _towerService;
+    private IHoleService _holeService;
     private ICubeFactory _cubeFactory;
     private IGameState _gameState;
     private ICubePool _cubePool;
@@ -21,10 +22,15 @@ public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler
     private bool _isDraggingTowerCube;
 
     [Inject]
-    public void Construct(ITowerService towerService, ICubeFactory cubeFactory,
-        IGameState gameState, ICubePool cubePool)
+    public void Construct(
+        ITowerService towerService,
+        IHoleService holeService,
+        ICubeFactory cubeFactory,
+        IGameState gameState,
+        ICubePool cubePool)
     {
         _towerService = towerService;
+        _holeService = holeService;
         _cubeFactory = cubeFactory;
         _gameState = gameState;
         _cubePool = cubePool;
@@ -75,14 +81,15 @@ public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler
             Debug.Log("Jump");
             _towerService.AddCube(_draggedCopy);
         }
-        else if (!_isDraggingTowerCube)
+        else if (_holeService.CanDropCube(_draggedCopy))
         {
-            // Return to pool instead of destroying
-            _cubePool.Return(_draggedCopy);
+            Debug.Log("Drop");
+            _holeService.DropCube(_draggedCopy);
         }
         else
         {
             Debug.Log("Destroy");
+            _cubePool.Return(_draggedCopy);
         }
     }
 }

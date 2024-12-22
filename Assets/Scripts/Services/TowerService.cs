@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
+using Random = UnityEngine.Random;
 
 public interface ITowerService
 {
@@ -8,30 +11,44 @@ public interface ITowerService
     void AddCube(GameObject cube);
     void RemoveCube(GameObject cube);
     int GetCurrentHeight();
-    event System.Action<GameObject> OnCubeAdded;
-    event System.Action<GameObject> OnCubeRemoved;
+    event Action<GameObject> OnCubeAdded;
+    event Action<GameObject> OnCubeRemoved;
 }
 
 public class TowerService : ITowerService
 {
-    private readonly IGameConfig _gameConfig;
-    private readonly IGameState _gameState;
+    private IGameConfig _gameConfig;
+    private IGameState _gameState;
+    
+    private TowerAreaProvider _towerAreaProvider;
 
-    public event System.Action<GameObject> OnCubeAdded;
-    public event System.Action<GameObject> OnCubeRemoved;
+    public event Action<GameObject> OnCubeAdded;
+    public event Action<GameObject> OnCubeRemoved;
 
-    public TowerService(IGameConfig gameConfig, IGameState gameState)
+    [Inject]
+    public void Construct(
+        IGameConfig gameConfig,
+        IGameState gameState,
+        TowerAreaProvider towerAreaProvider)
     {
         _gameConfig = gameConfig;
         _gameState = gameState;
+        _towerAreaProvider = towerAreaProvider;
     }
 
     public bool CanAddCube(GameObject cube)
     {
         if (_gameState.TowerCubes.Count == 0)
         {
-            var screenPoint = Camera.main.WorldToScreenPoint(cube.transform.position);
-            return screenPoint.x > Screen.width / 2;
+            Vector3[] corners = new Vector3[4];
+            cube.GetComponent<RectTransform>().GetWorldCorners(corners);
+    
+            foreach(Vector3 corner in corners)
+            {
+                if (!RectTransformUtility.RectangleContainsScreenPoint(_towerAreaProvider.TowerArea, corner))
+                    return false;
+            }
+            return true;
         }
 
         var currentCubeRect = cube.GetComponent<RectTransform>();

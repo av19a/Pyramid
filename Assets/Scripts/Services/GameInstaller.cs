@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Zenject;
 using UnityEngine;
 
@@ -6,13 +7,18 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private GameConfig gameConfig;
     [SerializeField] private GameObject cubePrefab;
     [SerializeField] private ScrollViewController scrollViewPrefab;
+    [SerializeField] private RectTransform towerArea;
+    [SerializeField] private RectTransform holeArea;
 
     public override void InstallBindings()
     {
+        DOTween.SetTweensCapacity(500, 50);
+        
         InstallConfigs();
         InstallFactories();
         InstallServices();
         InstallViews();
+        InstallProviders();
     }
 
     private void InstallConfigs()
@@ -48,6 +54,21 @@ public class GameInstaller : MonoInstaller
         Container.Bind<ITowerService>()
             .To<TowerService>()
             .AsSingle();
+        
+        Container.Bind<IHoleService>()
+            .To<HoleService>()
+            .AsSingle();
+    }
+    
+    private void InstallProviders()
+    {
+        Container.Bind<TowerAreaProvider>()
+            .AsSingle()
+            .WithArguments(towerArea);
+        
+        Container.Bind<HoleAreaProvider>()
+            .AsSingle()
+            .WithArguments(holeArea);
     }
 
     private void InstallViews()

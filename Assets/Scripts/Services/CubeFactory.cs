@@ -34,16 +34,13 @@ public class CubeFactory : ICubeFactory
 
     public GameObject CreateDraggedCube(Transform parent, GameObject original)
     {
-        // Store the original's ID before getting from pool
         int originalId = original.GetInstanceID();
         var originalView = original.GetComponent<CubeView>();
         
-        // Get cube from pool
         var copy = _cubePool.Get(original, parent);
         
-        // Set the original ID and color
         var copyView = copy.GetComponent<CubeView>();
-        copyView.Initialize(originalView.Color, originalId);  // Pass the stored originalId
+        copyView.Initialize(originalView.Color, originalId);
         
         return copy;
     }
