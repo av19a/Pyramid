@@ -18,7 +18,10 @@ public class CubeView : MonoBehaviour
     public void Initialize(Color color, int originalId = 0)
     {
         Color = color;
-        OriginalId = originalId;
+        if (originalId != 0)
+        {
+            OriginalId = originalId;
+        }
         _image.color = color;
     }
 }
