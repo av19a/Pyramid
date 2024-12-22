@@ -51,6 +51,16 @@ public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler
     public void OnEndDrag(PointerEventData eventData)
     {
         _canvasGroup.blocksRaycasts = true;
-        _towerService.AddCube(_draggedCopy);
+
+        if (_towerService.CanAddCube(_draggedCopy))
+        {
+            Debug.Log("Jump");
+            _towerService.AddCube(_draggedCopy);
+        }
+        else
+        {
+            Debug.Log("Destroy");
+        }
+
     }
 }

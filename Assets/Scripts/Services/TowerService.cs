@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface ITowerService
 {
-    bool CanAddCube(Vector2 position);
+    bool CanAddCube(GameObject cube);
     void AddCube(GameObject cube);
     void RemoveCube(GameObject cube);
     int GetCurrentHeight();
@@ -26,10 +26,23 @@ public class TowerService : ITowerService
         _gameState = gameState;
     }
 
-    public bool CanAddCube(Vector2 position)
+    public bool CanAddCube(GameObject cube)
     {
-        var screenPoint = Camera.main.WorldToScreenPoint(position);
-        return screenPoint.y < Screen.height - _gameConfig.CubeSize;
+        if (_gameState.TowerCubes.Count == 0)
+        {
+            var screenPoint = Camera.main.WorldToScreenPoint(cube.transform.position);
+            return screenPoint.x > Screen.width / 2;
+        }
+
+        var currentCubeRect = cube.GetComponent<RectTransform>();
+        var previousCubeRect = _gameState.TowerCubes[^1].GetComponent<RectTransform>();
+
+        float horizontalDistance = Mathf.Abs(currentCubeRect.anchoredPosition.x - previousCubeRect.anchoredPosition.x);
+        float verticalDistance = currentCubeRect.anchoredPosition.y - previousCubeRect.anchoredPosition.y;
+        bool isHorizontallyAligned = horizontalDistance <= _gameConfig.CubeSize * (1 + _gameConfig.MaxHorizontalOffset);
+        bool isVerticallyStacked = verticalDistance >= _gameConfig.CubeSize;
+
+        return isHorizontallyAligned && isVerticallyStacked;
     }
 
     public void AddCube(GameObject cube)
@@ -43,7 +56,7 @@ public class TowerService : ITowerService
         Vector2 newPosition = _gameState.TowerCubes.Count == 0 
             ? rectTransform.anchoredPosition 
             : _gameState.LastCubePosition + new Vector2(randomOffset, _gameConfig.CubeSize);
-        
+
         rectTransform.anchoredPosition = newPosition;
         _gameState.LastCubePosition = newPosition;
         _gameState.TowerCubes.Add(cube);

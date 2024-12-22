@@ -1075,7 +1075,7 @@ GameObject:
   - component: {fileID: 2000744703}
   - component: {fileID: 2000744702}
   m_Layer: 5
-  m_Name: RightSection
+  m_Name: Tower
   m_TagString: TowerArea
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1196,17 +1196,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4460225299006598916, guid: b852d734e0dcc41d0af427a52a4edc6e, type: 3}
   m_PrefabInstance: {fileID: 8752294663022169378}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6004295086180463608 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7317187957120393257, guid: b852d734e0dcc41d0af427a52a4edc6e, type: 3}
-  m_PrefabInstance: {fileID: 8752294663022169378}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eed056f2e5ce40309bee5b52a7bbdda, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7319592944234516264
 GameObject:
   m_ObjectHideFlags: 0
@@ -1238,7 +1227,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameConfig: {fileID: 11400000, guid: e6938805958a4436a9cf491b32f4b682, type: 2}
   cubePrefab: {fileID: 3759914984072513173, guid: 3b7d966901ec449959a05e826eb2e424, type: 3}
-  scrollViewPrefab: {fileID: 6004295086180463608}
+  scrollViewPrefab: {fileID: 7317187957120393257, guid: b852d734e0dcc41d0af427a52a4edc6e, type: 3}
+  tower: {fileID: 2000744701}
 --- !u!1001 &8752294663022169378
 PrefabInstance:
   m_ObjectHideFlags: 0
