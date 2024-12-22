@@ -3,42 +3,57 @@ using UnityEngine;
 
 public class GameInstaller : MonoInstaller
 {
-    // This field must be assigned in Unity Inspector
     [SerializeField] private GameConfig gameConfig;
     [SerializeField] private GameObject cubePrefab;
     [SerializeField] private ScrollViewController scrollViewPrefab;
 
     public override void InstallBindings()
     {
-        // The most important part - binding GameConfig to IGameConfig interface
-        // Make sure this binding happens BEFORE any other bindings that depend on IGameConfig
+        InstallConfigs();
+        InstallFactories();
+        InstallServices();
+        InstallViews();
+    }
+
+    private void InstallConfigs()
+    {
         Container.Bind<IGameConfig>()
             .To<GameConfig>()
             .FromScriptableObject(gameConfig)
             .AsSingle();
 
-        // Bind the cube prefab
         Container.Bind<GameObject>()
             .WithId("CubePrefab")
             .FromInstance(cubePrefab)
             .AsSingle();
+    }
 
-        // Bind all other services
-        // Container.Bind<IGameStateService>()
-        //     .To<GameStateService>()
-        //     .AsSingle();
-        
+    private void InstallFactories()
+    {
+        Container.Bind<ICubeFactory>()
+            .To<CubeFactory>()
+            .AsSingle();
+    }
+
+    private void InstallServices()
+    {
+        Container.Bind<IGameState>()
+            .To<GameState>()
+            .AsSingle();
+
         Container.Bind<ITowerService>()
-        .To<TowerService>()
-        .AsSingle();
-        
-        // Container.Bind<IMessageService>()
-        //     .To<MessageService>()
-        //     .AsSingle();
+            .To<TowerService>()
+            .AsSingle();
+    }
 
-        // Bind ScrollViewController
+    private void InstallViews()
+    {
         Container.Bind<ScrollViewController>()
             .FromComponentInNewPrefab(scrollViewPrefab)
+            .AsSingle();
+
+        Container.Bind<CubeDragController>()
+            .FromComponentInHierarchy()
             .AsSingle();
     }
 }

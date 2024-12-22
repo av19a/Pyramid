@@ -15,20 +15,19 @@ public interface ITowerService
 public class TowerService : ITowerService
 {
     private readonly IGameConfig _gameConfig;
-    private readonly List<GameObject> _towerCubes = new();
-    private Vector2 _lastCubePosition;
+    private readonly IGameState _gameState;
 
     public event System.Action<GameObject> OnCubeAdded;
     public event System.Action<GameObject> OnCubeRemoved;
 
-    public TowerService(IGameConfig gameConfig)
+    public TowerService(IGameConfig gameConfig, IGameState gameState)
     {
         _gameConfig = gameConfig;
+        _gameState = gameState;
     }
 
     public bool CanAddCube(Vector2 position)
     {
-        // Check if position is within screen bounds
         var screenPoint = Camera.main.WorldToScreenPoint(position);
         return screenPoint.y < Screen.height - _gameConfig.CubeSize;
     }
@@ -40,41 +39,39 @@ public class TowerService : ITowerService
             -_gameConfig.MaxHorizontalOffset * _gameConfig.CubeSize,
             _gameConfig.MaxHorizontalOffset * _gameConfig.CubeSize
         );
-
-        Vector2 newPosition = _towerCubes.Count == 0 
-            ? rectTransform.anchoredPosition 
-            : _lastCubePosition + new Vector2(randomOffset, _gameConfig.CubeSize);
-
-        rectTransform.anchoredPosition = newPosition;
-        _lastCubePosition = newPosition;
-        _towerCubes.Add(cube);
         
-        Debug.Log("Add cube");
+        Vector2 newPosition = _gameState.TowerCubes.Count == 0 
+            ? rectTransform.anchoredPosition 
+            : _gameState.LastCubePosition + new Vector2(randomOffset, _gameConfig.CubeSize);
+        
+        rectTransform.anchoredPosition = newPosition;
+        _gameState.LastCubePosition = newPosition;
+        _gameState.TowerCubes.Add(cube);
         
         OnCubeAdded?.Invoke(cube);
     }
 
     public void RemoveCube(GameObject cube)
     {
-        int index = _towerCubes.IndexOf(cube);
+        int index = _gameState.TowerCubes.IndexOf(cube);
         if (index >= 0)
         {
-            _towerCubes.RemoveAt(index);
-            // Adjust positions of cubes above
-            for (int i = index; i < _towerCubes.Count; i++)
+            _gameState.TowerCubes.RemoveAt(index);
+            
+            for (int i = index; i < _gameState.TowerCubes.Count; i++)
             {
-                var cubeRect = _towerCubes[i].GetComponent<RectTransform>();
+                var cubeRect = _gameState.TowerCubes[i].GetComponent<RectTransform>();
                 Vector2 newPos = cubeRect.anchoredPosition;
                 newPos.y -= _gameConfig.CubeSize;
                 cubeRect.anchoredPosition = newPos;
             }
             
-            if (_towerCubes.Count > 0)
-                _lastCubePosition = _towerCubes[^1].GetComponent<RectTransform>().anchoredPosition;
+            if (_gameState.TowerCubes.Count > 0)
+                _gameState.LastCubePosition = _gameState.TowerCubes[^1].GetComponent<RectTransform>().anchoredPosition;
                 
             OnCubeRemoved?.Invoke(cube);
         }
     }
 
-    public int GetCurrentHeight() => _towerCubes.Count;
+    public int GetCurrentHeight() => _gameState.CurrentHeight;
 }
