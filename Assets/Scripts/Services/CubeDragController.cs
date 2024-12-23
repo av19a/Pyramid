@@ -11,6 +11,7 @@ public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler
     private ITowerService _towerService;
     private IHoleService _holeService;
     private IMessageService _messageService;
+    private IAnimationService _animationService;
     private ICubeFactory _cubeFactory;
     private IGameState _gameState;
     private ICubePool _cubePool;
@@ -27,6 +28,7 @@ public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler
         ITowerService towerService,
         IHoleService holeService,
         IMessageService messageService,
+        IAnimationService animationService,
         ICubeFactory cubeFactory,
         IGameState gameState,
         ICubePool cubePool)
@@ -34,6 +36,7 @@ public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler
         _towerService = towerService;
         _holeService = holeService;
         _messageService = messageService;
+        _animationService = animationService;
         _cubeFactory = cubeFactory;
         _gameState = gameState;
         _cubePool = cubePool;
@@ -81,20 +84,20 @@ public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler
 
         if (_towerService.CanAddCube(_draggedCopy))
         {
-            Debug.Log("Jump");
             _towerService.AddCube(_draggedCopy);
             _messageService.ShowMessage("cube_added");
         }
         else if (_holeService.CanDropCube(_draggedCopy))
         {
-            Debug.Log("Drop");
             _holeService.DropCube(_draggedCopy);
-            _messageService.ShowMessage("cube_removed");
+            _messageService.ShowMessage("cube_dropped");
         }
         else
         {
-            Debug.Log("Destroy");
-            _cubePool.Return(_draggedCopy);
+            _animationService.PlayFailedPlacementAnimation(_draggedCopy, () =>
+            {
+                _cubePool.Return(_draggedCopy);
+            });
             _messageService.ShowMessage("cube_destroyed");
         }
     }

@@ -20,6 +20,7 @@ public class TowerService : ITowerService
     private IGameConfig _gameConfig;
     private IGameState _gameState;
     private IMessageService _messageService;
+    private IAnimationService _animationService;
     
     private TowerAreaProvider _towerAreaProvider;
 
@@ -31,11 +32,13 @@ public class TowerService : ITowerService
         IGameConfig gameConfig,
         IGameState gameState,
         IMessageService messageService,
+        IAnimationService animationService,
         TowerAreaProvider towerAreaProvider)
     {
         _gameConfig = gameConfig;
         _gameState = gameState;
         _messageService = messageService;
+        _animationService = animationService;
         _towerAreaProvider = towerAreaProvider;
     }
 
@@ -76,15 +79,20 @@ public class TowerService : ITowerService
             _gameConfig.MaxHorizontalOffset * _gameConfig.CubeSize
         );
         
+        Vector2 oldPosition = rectTransform.anchoredPosition;
+        
         Vector2 newPosition = _gameState.TowerCubes.Count == 0 
             ? rectTransform.anchoredPosition 
             : _gameState.LastCubePosition + new Vector2(randomOffset, _gameConfig.CubeSize);
 
-        rectTransform.anchoredPosition = newPosition;
-        _gameState.LastCubePosition = newPosition;
-        _gameState.TowerCubes.Add(cube);
+        _animationService.PlayTowerPlacementAnimation(cube, oldPosition, newPosition, () =>
+        {
+            rectTransform.anchoredPosition = newPosition;
+            _gameState.LastCubePosition = newPosition;
+            _gameState.TowerCubes.Add(cube);
         
-        OnCubeAdded?.Invoke(cube);
+            OnCubeAdded?.Invoke(cube);
+        });
     }
 
     public void RemoveCube(GameObject cube)
@@ -94,19 +102,41 @@ public class TowerService : ITowerService
         {
             _gameState.TowerCubes.RemoveAt(index);
             
+            int remainingAnimations = _gameState.TowerCubes.Count - index;
+            if (remainingAnimations <= 0)
+            {
+                if (_gameState.TowerCubes.Count > 0)
+                    _gameState.LastCubePosition = _gameState.TowerCubes[^1].GetComponent<RectTransform>().anchoredPosition;
+                    
+                OnCubeRemoved?.Invoke(cube);
+                return;
+            }
+
             for (int i = index; i < _gameState.TowerCubes.Count; i++)
             {
-                var cubeRect = _gameState.TowerCubes[i].GetComponent<RectTransform>();
-                Vector2 newPos = cubeRect.anchoredPosition;
-                newPos.y -= _gameConfig.CubeSize;
-                cubeRect.anchoredPosition = newPos;
+                var cubeToDrop = _gameState.TowerCubes[i];
+                var cubeRect = cubeToDrop.GetComponent<RectTransform>();
+                Vector2 currentPos = cubeRect.anchoredPosition;
+                Vector2 targetPos = new Vector2(currentPos.x, currentPos.y - _gameConfig.CubeSize);
+
+                _animationService.PlayCubeDropAnimation(
+                    cubeToDrop, 
+                    targetPos,
+                    () => {
+                        remainingAnimations--;
+                        if (remainingAnimations == 0)
+                        {
+                            if (_gameState.TowerCubes.Count > 0)
+                                _gameState.LastCubePosition = _gameState.TowerCubes[^1].GetComponent<RectTransform>().anchoredPosition;
+                                
+                            OnCubeRemoved?.Invoke(cube);
+                        }
+                    }
+                );
             }
-            
-            if (_gameState.TowerCubes.Count > 0)
-                _gameState.LastCubePosition = _gameState.TowerCubes[^1].GetComponent<RectTransform>().anchoredPosition;
-                
-            OnCubeRemoved?.Invoke(cube);
         }
+        
+        _messageService.ShowMessage("cube_removed");
     }
 
     public int GetCurrentHeight() => _gameState.CurrentHeight;

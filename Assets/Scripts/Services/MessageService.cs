@@ -27,7 +27,8 @@ public class MessageService : IMessageService
             {"cube_added", "Cube added to tower!"},
             {"cube_removed", "Cube removed from tower!"},
             {"tower_full", "Tower is too high!"},
-            {"cube_destroyed", "Cube destroyed!"}
+            {"cube_destroyed", "Cube destroyed!"},
+            {"cube_dropped", "Cube dropped!"},
         };
     }
 

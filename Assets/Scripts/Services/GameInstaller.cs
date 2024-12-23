@@ -62,6 +62,10 @@ public class GameInstaller : MonoInstaller
         Container.Bind<IMessageService>()
             .To<MessageService>()
             .AsSingle();
+        
+        Container.Bind<IAnimationService>()
+            .To<AnimationService>()
+            .AsSingle();
     }
     
     private void InstallProviders()

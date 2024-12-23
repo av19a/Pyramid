@@ -16,6 +16,7 @@ public class HoleService : IHoleService
 {
     private IGameConfig _gameConfig;
     private ICubePool _cubePool;
+    private IAnimationService _animationService;
     
     private HoleAreaProvider _holeAreaProvider;
 
@@ -25,10 +26,12 @@ public class HoleService : IHoleService
     public void Construct(
         ICubePool cubePool,
         IGameConfig gameConfig,
+        IAnimationService animationService,
         HoleAreaProvider holeAreaProvider)
     {
         _cubePool = cubePool;
         _gameConfig = gameConfig;
+        _animationService = animationService;
         _holeAreaProvider = holeAreaProvider;
     }
 
@@ -42,21 +45,17 @@ public class HoleService : IHoleService
             if (!RectTransformUtility.RectangleContainsScreenPoint(_holeAreaProvider.HoleArea, corner))
                 return false;
         }
+        
+        cube.transform.SetParent(_holeAreaProvider.HoleArea);
         return true;
     }
 
     public void DropCube(GameObject cube)
     {
-        var rectTransform = cube.GetComponent<RectTransform>();
-        var startPosition = rectTransform.anchoredPosition;
-        var endPosition = startPosition + Vector2.down * (_gameConfig.CubeSize * 3);
-
-        rectTransform.DOAnchorPos(endPosition, 0.5f)
-            .SetEase(Ease.InQuad)
-            .OnComplete(() =>
-            {
-                OnCubeDropped?.Invoke(cube);
-                _cubePool.Return(cube);
-            });
+        _animationService.PlayHoleDropAnimation(cube, () =>
+        {
+            OnCubeDropped?.Invoke(cube);
+            _cubePool.Return(cube);
+        });
     }
 }

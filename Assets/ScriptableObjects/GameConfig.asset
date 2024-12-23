@@ -35,5 +35,5 @@ MonoBehaviour:
   - {r: 0.7538762, g: 0.4449537, b: 0.9528302, a: 1}
   - {r: 0.764151, g: 0.039649345, b: 0.26316592, a: 1}
   maxHorizontalOffset: 0.5
-  cubeSize: 100
+  cubeSize: 130
   scrollSpeed: 10
