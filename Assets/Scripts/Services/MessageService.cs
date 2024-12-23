@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using TMPro;
+using UnityEngine.UI;
 
 public interface IMessageService
 {
@@ -14,9 +16,13 @@ public class MessageService : IMessageService
 {
     private Dictionary<string, Dictionary<string, string>> _localizations = new();
     private string _currentLanguage = "en";
+
+    private TMP_Text _message;
     
-    public MessageService()
+    [Inject]
+    public MessageService([Inject(Id = "Message")] TMP_Text message)
     {
+        _message = message;
         LoadLocalizations();
     }
 
@@ -37,7 +43,7 @@ public class MessageService : IMessageService
         if (_localizations[_currentLanguage].TryGetValue(messageKey, out string message))
         {
             string formattedMessage = string.Format(message, args);
-            Debug.Log(formattedMessage);
+            _message.text = formattedMessage;
         }
     }
 

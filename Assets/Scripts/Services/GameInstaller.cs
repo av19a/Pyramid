@@ -1,6 +1,9 @@
 using DG.Tweening;
 using Zenject;
 using UnityEngine;
+using TMPro;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class GameInstaller : MonoInstaller
 {
@@ -9,6 +12,7 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private ScrollViewController scrollViewPrefab;
     [SerializeField] private RectTransform towerArea;
     [SerializeField] private RectTransform holeArea;
+    [SerializeField] private TMP_Text message;
 
     public override void InstallBindings()
     {
@@ -31,6 +35,11 @@ public class GameInstaller : MonoInstaller
         Container.Bind<GameObject>()
             .WithId("CubePrefab")
             .FromInstance(cubePrefab)
+            .AsSingle();
+        
+        Container.Bind<TMP_Text>()
+            .WithId("Message")
+            .FromInstance(message)
             .AsSingle();
     }
 
@@ -58,7 +67,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<IHoleService>()
             .To<HoleService>()
             .AsSingle();
-        
+
         Container.Bind<IMessageService>()
             .To<MessageService>()
             .AsSingle();
