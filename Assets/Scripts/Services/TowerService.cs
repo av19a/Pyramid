@@ -19,6 +19,7 @@ public class TowerService : ITowerService
 {
     private IGameConfig _gameConfig;
     private IGameState _gameState;
+    private IMessageService _messageService;
     
     private TowerAreaProvider _towerAreaProvider;
 
@@ -29,10 +30,12 @@ public class TowerService : ITowerService
     public void Construct(
         IGameConfig gameConfig,
         IGameState gameState,
+        IMessageService messageService,
         TowerAreaProvider towerAreaProvider)
     {
         _gameConfig = gameConfig;
         _gameState = gameState;
+        _messageService = messageService;
         _towerAreaProvider = towerAreaProvider;
     }
 
@@ -46,7 +49,10 @@ public class TowerService : ITowerService
             foreach(Vector3 corner in corners)
             {
                 if (!RectTransformUtility.RectangleContainsScreenPoint(_towerAreaProvider.TowerArea, corner))
+                {
+                    _messageService.ShowMessage("tower_full");
                     return false;
+                }
             }
             return true;
         }

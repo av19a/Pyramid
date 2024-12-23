@@ -58,6 +58,10 @@ public class GameInstaller : MonoInstaller
         Container.Bind<IHoleService>()
             .To<HoleService>()
             .AsSingle();
+        
+        Container.Bind<IMessageService>()
+            .To<MessageService>()
+            .AsSingle();
     }
     
     private void InstallProviders()

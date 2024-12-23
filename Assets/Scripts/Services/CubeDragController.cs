@@ -10,6 +10,7 @@ public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler
 {
     private ITowerService _towerService;
     private IHoleService _holeService;
+    private IMessageService _messageService;
     private ICubeFactory _cubeFactory;
     private IGameState _gameState;
     private ICubePool _cubePool;
@@ -25,12 +26,14 @@ public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler
     public void Construct(
         ITowerService towerService,
         IHoleService holeService,
+        IMessageService messageService,
         ICubeFactory cubeFactory,
         IGameState gameState,
         ICubePool cubePool)
     {
         _towerService = towerService;
         _holeService = holeService;
+        _messageService = messageService;
         _cubeFactory = cubeFactory;
         _gameState = gameState;
         _cubePool = cubePool;
@@ -80,16 +83,19 @@ public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler
         {
             Debug.Log("Jump");
             _towerService.AddCube(_draggedCopy);
+            _messageService.ShowMessage("cube_added");
         }
         else if (_holeService.CanDropCube(_draggedCopy))
         {
             Debug.Log("Drop");
             _holeService.DropCube(_draggedCopy);
+            _messageService.ShowMessage("cube_removed");
         }
         else
         {
             Debug.Log("Destroy");
             _cubePool.Return(_draggedCopy);
+            _messageService.ShowMessage("cube_destroyed");
         }
     }
 }

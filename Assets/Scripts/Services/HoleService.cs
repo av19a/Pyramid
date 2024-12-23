@@ -14,7 +14,8 @@ public interface IHoleService
 
 public class HoleService : IHoleService
 {
-    private readonly ICubePool _cubePool;
+    private IGameConfig _gameConfig;
+    private ICubePool _cubePool;
     
     private HoleAreaProvider _holeAreaProvider;
 
@@ -22,8 +23,12 @@ public class HoleService : IHoleService
 
     [Inject]
     public void Construct(
+        ICubePool cubePool,
+        IGameConfig gameConfig,
         HoleAreaProvider holeAreaProvider)
     {
+        _cubePool = cubePool;
+        _gameConfig = gameConfig;
         _holeAreaProvider = holeAreaProvider;
     }
 
@@ -43,50 +48,15 @@ public class HoleService : IHoleService
     public void DropCube(GameObject cube)
     {
         var rectTransform = cube.GetComponent<RectTransform>();
-        
         var startPosition = rectTransform.anchoredPosition;
-        var endPosition = startPosition + Vector2.down * Screen.height;
+        var endPosition = startPosition + Vector2.down * (_gameConfig.CubeSize * 3);
 
-        Sequence dropSequence = DOTween.Sequence();
-
-        Vector2[] path = new Vector2[]
-        {
-            startPosition,
-            endPosition
-        };
-
-        dropSequence.Append(
-            rectTransform.DOPath(
-                path.Select(p => (Vector3)p).ToArray(),
-                2f,
-                PathType.CatmullRom
-            ).SetEase(Ease.InQuad)
-        );
-
-        dropSequence.Join(
-            rectTransform.DORotate(
-                new Vector3(0, 0, Random.Range(-360f, 360f)),
-                2f
-            ).SetEase(Ease.OutQuad)
-        );
-
-        dropSequence.Join(
-            rectTransform.DOScale(
-                Vector3.one * 0.8f,
-                2f
-            ).SetEase(Ease.InQuad)
-        );
-
-        dropSequence.OnComplete(() =>
-        {
-            OnCubeDropped?.Invoke(cube);
-            
-            rectTransform.localScale = Vector3.one;
-            rectTransform.rotation = Quaternion.identity;
-            
-            _cubePool.Return(cube);
-        });
-
-        dropSequence.Play();
+        rectTransform.DOAnchorPos(endPosition, 0.5f)
+            .SetEase(Ease.InQuad)
+            .OnComplete(() =>
+            {
+                OnCubeDropped?.Invoke(cube);
+                _cubePool.Return(cube);
+            });
     }
 }
