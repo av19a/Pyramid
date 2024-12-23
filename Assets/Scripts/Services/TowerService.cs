@@ -44,6 +44,8 @@ public class TowerService : ITowerService
 
     public bool CanAddCube(GameObject cube)
     {
+        var rectTransform = cube.GetComponent<RectTransform>();
+        
         if (_gameState.TowerCubes.Count == 0)
         {
             Vector3[] corners = new Vector3[4];
@@ -53,22 +55,29 @@ public class TowerService : ITowerService
             {
                 if (!RectTransformUtility.RectangleContainsScreenPoint(_towerAreaProvider.TowerArea, corner))
                 {
-                    _messageService.ShowMessage("tower_full");
+                    _messageService.ShowMessage("cube_destroyed");
                     return false;
                 }
             }
+
             return true;
         }
 
-        var currentCubeRect = cube.GetComponent<RectTransform>();
-        var previousCubeRect = _gameState.TowerCubes[^1].GetComponent<RectTransform>();
+        foreach (var towerCube in _gameState.TowerCubes)
+        {
+            var towerCubeRect = towerCube.GetComponent<RectTransform>();
+        
+            float verticalDistance = Mathf.Abs(rectTransform.anchoredPosition.y - towerCubeRect.anchoredPosition.y);
+            float horizontalDistance = Mathf.Abs(rectTransform.anchoredPosition.x - towerCubeRect.anchoredPosition.x);
 
-        float horizontalDistance = Mathf.Abs(currentCubeRect.anchoredPosition.x - previousCubeRect.anchoredPosition.x);
-        float verticalDistance = currentCubeRect.anchoredPosition.y - previousCubeRect.anchoredPosition.y;
-        bool isHorizontallyAligned = horizontalDistance <= _gameConfig.CubeSize * (1 + _gameConfig.MaxHorizontalOffset);
-        bool isVerticallyStacked = verticalDistance >= _gameConfig.CubeSize;
-
-        return isHorizontallyAligned && isVerticallyStacked;
+            bool hasOverlap = verticalDistance < _gameConfig.CubeSize * 0.8f && 
+                              horizontalDistance < _gameConfig.CubeSize * 0.8f;
+                         
+            if (hasOverlap)
+                return true;
+        }
+    
+        return false;
     }
 
     public void AddCube(GameObject cube)
@@ -90,6 +99,7 @@ public class TowerService : ITowerService
             rectTransform.anchoredPosition = newPosition;
             _gameState.LastCubePosition = newPosition;
             _gameState.TowerCubes.Add(cube);
+            // cube.transform.SetParent(_towerAreaProvider.TowerArea);
         
             OnCubeAdded?.Invoke(cube);
         });
