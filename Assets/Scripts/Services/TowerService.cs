@@ -55,12 +55,27 @@ public class TowerService : ITowerService
             {
                 if (!RectTransformUtility.RectangleContainsScreenPoint(_towerAreaProvider.TowerArea, corner))
                 {
-                    _messageService.ShowMessage("cube_destroyed");
                     return false;
                 }
             }
 
             return true;
+        }
+        
+        var lastCube = _gameState.TowerCubes[^1];
+        
+        Vector3[] towerCorners = new Vector3[4];
+        Vector3[] cubeCorners = new Vector3[4];
+    
+        _towerAreaProvider.TowerArea.GetWorldCorners(towerCorners);
+        lastCube.GetComponent<RectTransform>().GetWorldCorners(cubeCorners);
+    
+        float towerTopY = towerCorners[1].y;
+        float cubeTopY = cubeCorners[1].y;
+
+        if (cubeTopY + 14 > towerTopY)
+        {
+            return false;
         }
 
         foreach (var towerCube in _gameState.TowerCubes)
@@ -99,7 +114,6 @@ public class TowerService : ITowerService
             rectTransform.anchoredPosition = newPosition;
             _gameState.LastCubePosition = newPosition;
             _gameState.TowerCubes.Add(cube);
-            // cube.transform.SetParent(_towerAreaProvider.TowerArea);
         
             OnCubeAdded?.Invoke(cube);
         });
