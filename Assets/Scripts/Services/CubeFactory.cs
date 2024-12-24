@@ -39,6 +39,10 @@ public class CubeFactory : ICubeFactory
         
         var copy = _cubePool.Get(original, parent);
         
+        var rectTransform = copy.GetComponent<RectTransform>();
+        rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+        rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        
         var copyView = copy.GetComponent<CubeView>();
         copyView.Initialize(originalView.Color, originalId);
         

@@ -9,14 +9,12 @@ public class ScrollViewController : MonoBehaviour
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private RectTransform content;
     
-    private IGameConfig _gameConfig;
-    private ICubeFactory _cubeFactory;
+    [Inject] private IGameConfig _gameConfig;
+    [Inject] private ICubeFactory _cubeFactory;
     
     [Inject]
-    public void Construct(IGameConfig gameConfig, ICubeFactory cubeFactory)
+    private void Initialize()
     {
-        _gameConfig = gameConfig;
-        _cubeFactory = cubeFactory;
         InitializeScrollView();
     }
 

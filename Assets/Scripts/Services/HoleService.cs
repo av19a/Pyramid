@@ -14,16 +14,15 @@ public interface IHoleService
 
 public class HoleService : IHoleService
 {
-    private IGameConfig _gameConfig;
-    private ICubePool _cubePool;
-    private IAnimationService _animationService;
-    
-    private HoleAreaProvider _holeAreaProvider;
+    private readonly IGameConfig _gameConfig;
+    private readonly ICubePool _cubePool;
+    private readonly IAnimationService _animationService;
+    private readonly HoleAreaProvider _holeAreaProvider;
 
     public event Action<GameObject> OnCubeDropped;
 
     [Inject]
-    public void Construct(
+    public HoleService(
         ICubePool cubePool,
         IGameConfig gameConfig,
         IAnimationService animationService,

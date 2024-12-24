@@ -8,41 +8,22 @@ using Zenject;
 
 public class CubeDragController : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    private ITowerService _towerService;
-    private IHoleService _holeService;
-    private IMessageService _messageService;
-    private IAnimationService _animationService;
-    private ICubeFactory _cubeFactory;
-    private IGameState _gameState;
-    private ICubePool _cubePool;
+    [Inject] private ITowerService _towerService;
+    [Inject] private IHoleService _holeService;
+    [Inject] private IMessageService _messageService;
+    [Inject] private IAnimationService _animationService;
+    [Inject] private ICubeFactory _cubeFactory;
+    [Inject] private IGameState _gameState;
+    [Inject] private ICubePool _cubePool;
     
     private Canvas _canvas;
     private RectTransform _rectTransform;
     private CanvasGroup _canvasGroup;
     private GameObject _draggedCopy;
-    
     private bool _isDraggingTowerCube;
 
     [Inject]
-    public void Construct(
-        ITowerService towerService,
-        IHoleService holeService,
-        IMessageService messageService,
-        IAnimationService animationService,
-        ICubeFactory cubeFactory,
-        IGameState gameState,
-        ICubePool cubePool)
-    {
-        _towerService = towerService;
-        _holeService = holeService;
-        _messageService = messageService;
-        _animationService = animationService;
-        _cubeFactory = cubeFactory;
-        _gameState = gameState;
-        _cubePool = cubePool;
-    }
-
-    private void Awake()
+    private void Initialize()
     {
         _rectTransform = GetComponent<RectTransform>();
         _canvasGroup = GetComponent<CanvasGroup>();

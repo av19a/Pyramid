@@ -17,10 +17,8 @@ public class AnimationService : IAnimationService
 {
     private readonly IGameConfig _gameConfig;
 
-    public AnimationService(IGameConfig gameConfig)
-    {
-        _gameConfig = gameConfig;
-    }
+    [Inject]
+    public AnimationService(IGameConfig gameConfig) => _gameConfig = gameConfig;
 
     public void PlayTowerPlacementAnimation(GameObject cube, Vector2 startPos, Vector2 endPos, Action onComplete = null)
     {
@@ -151,6 +149,6 @@ public class AnimationService : IAnimationService
     public void StopAllAnimations(GameObject cube)
     {
         var rectTransform = cube.GetComponent<RectTransform>();
-        rectTransform.DOKill(true); // Kill all tweens and restore original values
+        rectTransform.DOKill(true);
     }
 }

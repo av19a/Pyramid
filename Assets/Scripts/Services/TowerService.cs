@@ -15,31 +15,38 @@ public interface ITowerService
     event Action<GameObject> OnCubeRemoved;
 }
 
-public class TowerService : ITowerService
+public class TowerService : ITowerService, IInitializable
 {
-    private IGameConfig _gameConfig;
-    private IGameState _gameState;
-    private IMessageService _messageService;
-    private IAnimationService _animationService;
-    
-    private TowerAreaProvider _towerAreaProvider;
+    private readonly IGameConfig _gameConfig;
+    private readonly IGameState _gameState;
+    private readonly IMessageService _messageService;
+    private readonly IAnimationService _animationService;
+    private readonly TowerAreaProvider _towerAreaProvider;
+    private readonly ITowerStateSaver _towerStateSaver;
 
     public event Action<GameObject> OnCubeAdded;
     public event Action<GameObject> OnCubeRemoved;
 
     [Inject]
-    public void Construct(
+    public TowerService(
         IGameConfig gameConfig,
         IGameState gameState,
         IMessageService messageService,
         IAnimationService animationService,
-        TowerAreaProvider towerAreaProvider)
+        TowerAreaProvider towerAreaProvider,
+        ITowerStateSaver towerStateSaver)
     {
         _gameConfig = gameConfig;
         _gameState = gameState;
         _messageService = messageService;
         _animationService = animationService;
         _towerAreaProvider = towerAreaProvider;
+        _towerStateSaver = towerStateSaver;
+    }
+    
+    public void Initialize()
+    {
+        _towerStateSaver.LoadTowerState();
     }
 
     public bool CanAddCube(GameObject cube)
@@ -104,7 +111,6 @@ public class TowerService : ITowerService
         );
         
         Vector2 oldPosition = rectTransform.anchoredPosition;
-        
         Vector2 newPosition = _gameState.TowerCubes.Count == 0 
             ? rectTransform.anchoredPosition 
             : _gameState.LastCubePosition + new Vector2(randomOffset, _gameConfig.CubeSize);
@@ -114,8 +120,9 @@ public class TowerService : ITowerService
             rectTransform.anchoredPosition = newPosition;
             _gameState.LastCubePosition = newPosition;
             _gameState.TowerCubes.Add(cube);
-        
             OnCubeAdded?.Invoke(cube);
+            
+            _towerStateSaver.SaveTowerState();
         });
     }
 
@@ -154,13 +161,14 @@ public class TowerService : ITowerService
                                 _gameState.LastCubePosition = _gameState.TowerCubes[^1].GetComponent<RectTransform>().anchoredPosition;
                                 
                             OnCubeRemoved?.Invoke(cube);
+                            
+                            _messageService.ShowMessage("cube_removed");
+                            _towerStateSaver.SaveTowerState();
                         }
                     }
                 );
             }
         }
-        
-        _messageService.ShowMessage("cube_removed");
     }
 
     public int GetCurrentHeight() => _gameState.CurrentHeight;

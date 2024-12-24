@@ -13,93 +13,29 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private RectTransform towerArea;
     [SerializeField] private RectTransform holeArea;
     [SerializeField] private TMP_Text message;
+    [SerializeField] private Canvas mainCanvas;
 
     public override void InstallBindings()
     {
-        DOTween.SetTweensCapacity(500, 50);
-        
-        InstallConfigs();
-        InstallFactories();
-        InstallServices();
-        InstallViews();
-        InstallProviders();
-    }
+        Container.Bind<Canvas>().FromInstance(mainCanvas).AsSingle();
+        Container.Bind<ITowerStateSaver>().To<TowerStateSaver>().AsSingle();
+        Container.BindInterfacesAndSelfTo<GameState>().AsSingle();
+        Container.BindInterfacesAndSelfTo<TowerService>().AsSingle();
+        Container.BindInterfacesAndSelfTo<HoleService>().AsSingle();
+        Container.BindInterfacesAndSelfTo<MessageService>().AsSingle();
+        Container.BindInterfacesAndSelfTo<AnimationService>().AsSingle();
+        Container.BindInterfacesAndSelfTo<CubeFactory>().AsSingle();
+        Container.BindInterfacesAndSelfTo<CubePool>().AsSingle();
 
-    private void InstallConfigs()
-    {
-        Container.Bind<IGameConfig>()
-            .To<GameConfig>()
-            .FromScriptableObject(gameConfig)
-            .AsSingle();
-
-        Container.Bind<GameObject>()
-            .WithId("CubePrefab")
-            .FromInstance(cubePrefab)
-            .AsSingle();
+        Container.Bind<IGameConfig>().To<GameConfig>().FromScriptableObject(gameConfig).AsSingle();
+        Container.Bind<GameObject>().WithId("CubePrefab").FromInstance(cubePrefab).AsSingle();
+        Container.Bind<TMP_Text>().WithId("Message").FromInstance(message).AsSingle();
         
-        Container.Bind<TMP_Text>()
-            .WithId("Message")
-            .FromInstance(message)
-            .AsSingle();
-    }
-
-    private void InstallFactories()
-    {
-        Container.Bind<ICubePool>()
-            .To<CubePool>()
-            .AsSingle();
+        Container.Bind<TowerAreaProvider>().AsSingle().WithArguments(towerArea);
+        Container.Bind<HoleAreaProvider>().AsSingle().WithArguments(holeArea);
         
-        Container.Bind<ICubeFactory>()
-            .To<CubeFactory>()
-            .AsSingle();
-    }
-
-    private void InstallServices()
-    {
-        Container.Bind<IGameStateService>()
-            .To<GameStateService>()
-            .AsSingle();
-        
-        Container.Bind<IGameState>()
-            .To<GameState>()
-            .AsSingle();
-
-        Container.Bind<ITowerService>()
-            .To<TowerService>()
-            .AsSingle();
-        
-        Container.Bind<IHoleService>()
-            .To<HoleService>()
-            .AsSingle();
-
-        Container.Bind<IMessageService>()
-            .To<MessageService>()
-            .AsSingle();
-        
-        Container.Bind<IAnimationService>()
-            .To<AnimationService>()
-            .AsSingle();
-    }
-    
-    private void InstallProviders()
-    {
-        Container.Bind<TowerAreaProvider>()
-            .AsSingle()
-            .WithArguments(towerArea);
-        
-        Container.Bind<HoleAreaProvider>()
-            .AsSingle()
-            .WithArguments(holeArea);
-    }
-
-    private void InstallViews()
-    {
         Container.Bind<ScrollViewController>()
             .FromComponentInNewPrefab(scrollViewPrefab)
-            .AsSingle();
-
-        Container.Bind<CubeDragController>()
-            .FromComponentInHierarchy()
             .AsSingle();
     }
 }

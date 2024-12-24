@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public interface IGameState
 {
@@ -13,6 +14,14 @@ public interface IGameState
 public class GameState : IGameState
 {
     private List<GameObject> _towerCubes = new();
+    
+    // private Canvas _canvas;
+    //
+    // [Inject]
+    // public void Initialize(Canvas canvas)
+    // {
+    //     _canvas = canvas;
+    // }
     
     public int CurrentHeight => _towerCubes.Count;
     public List<GameObject> TowerCubes => _towerCubes;
