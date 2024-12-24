@@ -56,6 +56,10 @@ public class GameInstaller : MonoInstaller
 
     private void InstallServices()
     {
+        Container.Bind<IGameStateService>()
+            .To<GameStateService>()
+            .AsSingle();
+        
         Container.Bind<IGameState>()
             .To<GameState>()
             .AsSingle();
