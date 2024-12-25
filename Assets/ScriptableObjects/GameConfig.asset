@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a771681499f05442c80c89f84f7d59ec, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: 
+  numberOfCubes: 20
+  cubeColors:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 1, g: 0.63471913, b: 0, a: 1}
+  - {r: 1, g: 0.9747954, b: 0, a: 1}
+  - {r: 0.021963209, g: 0.745283, b: 0.017577427, a: 1}
+  - {r: 0, g: 0.6476085, b: 1, a: 1}
+  - {r: 0, g: 0.21875906, b: 1, a: 1}
+  - {r: 0.47539377, g: 0, b: 1, a: 1}
+  - {r: 0.8536844, g: 0, b: 1, a: 1}
+  - {r: 1, g: 0, b: 0.6154237, a: 1}
+  - {r: 0, g: 0, b: 0, a: 1}
+  - {r: 0.5377358, g: 0.5377358, b: 0.5377358, a: 1}
+  - {r: 0.5849056, g: 0.10929228, b: 0.03586687, a: 1}
+  - {r: 1, g: 0.5235849, b: 0.54665905, a: 1}
+  - {r: 0.9716981, g: 0.72147095, b: 0.45376468, a: 1}
+  - {r: 0.9759877, g: 0.990566, b: 0.4438857, a: 1}
+  - {r: 0.5052037, g: 0.9433962, b: 0.4672481, a: 1}
+  - {r: 0.49474904, g: 0.7972589, b: 0.9622642, a: 1}
+  - {r: 0.47668213, g: 0.5483278, b: 0.9811321, a: 1}
+  - {r: 0.7538762, g: 0.4449537, b: 0.9528302, a: 1}
+  - {r: 0.764151, g: 0.039649345, b: 0.26316592, a: 1}
+  maxHorizontalOffset: 0.5
+  cubeSize: 130
+  scrollSpeed: 10
