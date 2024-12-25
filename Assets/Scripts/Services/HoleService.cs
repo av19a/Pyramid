@@ -36,17 +36,40 @@ public class HoleService : IHoleService
 
     public bool CanDropCube(GameObject cube)
     {
-        Vector3[] corners = new Vector3[4];
-        cube.GetComponent<RectTransform>().GetWorldCorners(corners);
+        Vector3[] cubeCorners = new Vector3[4];
+        Vector3[] holeCorners = new Vector3[4];
     
-        foreach(Vector3 corner in corners)
+        cube.GetComponent<RectTransform>().GetWorldCorners(cubeCorners);
+        _holeAreaProvider.HoleArea.GetWorldCorners(holeCorners);
+    
+        Vector2 cubeLeftCorner = RectTransformUtility.WorldToScreenPoint(Camera.main, cubeCorners[0]);
+        Vector2 cubeRightCorner = RectTransformUtility.WorldToScreenPoint(Camera.main, cubeCorners[3]);
+        Vector2 holeLeftCorner = RectTransformUtility.WorldToScreenPoint(Camera.main, holeCorners[0]);
+        Vector2 holeRightCorner = RectTransformUtility.WorldToScreenPoint(Camera.main, holeCorners[3]);
+    
+        if (cubeLeftCorner.x < holeLeftCorner.x || cubeRightCorner.x > holeRightCorner.x)
         {
-            if (!RectTransformUtility.RectangleContainsScreenPoint(_holeAreaProvider.HoleArea, corner))
-                return false;
+            return false;
         }
-        
-        cube.transform.SetParent(_holeAreaProvider.HoleArea);
-        return true;
+    
+        Vector2 cubeCenter = RectTransformUtility.WorldToScreenPoint(Camera.main, cube.transform.position);
+        Vector2 holeCenter = RectTransformUtility.WorldToScreenPoint(Camera.main, _holeAreaProvider.HoleArea.position);
+
+        float a = _holeAreaProvider.HoleArea.rect.width / 2;
+        float b = _holeAreaProvider.HoleArea.rect.height / 2;
+
+        float dx = cubeCenter.x - holeCenter.x;
+        float dy = cubeCenter.y - holeCenter.y;
+
+        bool isAboveOrInside = cubeCenter.y >= holeCenter.y;
+        bool isInside = (dx * dx) / (a * a) + (dy * dy) / (b * b) <= 1;
+
+        if (isInside && isAboveOrInside)
+        {
+            cube.transform.SetParent(_holeAreaProvider.HoleArea);
+            return true;
+        }
+        return false;
     }
 
     public void DropCube(GameObject cube)
